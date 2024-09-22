@@ -1,0 +1,81 @@
+-- 1.Find all employees who are over 40 years old and work in the Parks and Recreation department.
+select distinct es.employee_id, ed.age , es.first_name, es.last_name, es.occupation, 
+		pd.department_name from employee_salary es
+inner join parks_departments pd 
+on es.employee_id = pd.department_id  
+inner join employee_demographics ed 
+on es.employee_id = ed.employee_id
+where ed.age > 40 and pd.department_name = 'Parks and Recreation';
+
+-- 2.List the names and salaries of employees who either earn more than $70,000 or are younger than 35
+select es.first_name, es.last_name, ed.age, es.salary
+	from employee_salary es
+	inner join employee_demographics ed 
+	on es.employee_id = ed.employee_id 
+	where ed.age >= 35 or es.salary >= 70000
+	order by 4 desc
+	
+-- 3.Show the full names and occupations of employees who have "Manager" in their job title or earn between $55,000 and $65,000.
+select ed.first_name ,ed.last_name ,es.occupation , es.salary 
+	from employee_demographics ed 
+	inner join employee_salary es 
+	on ed.employee_id = es.employee_id 
+	where es.occupation like '%Manager%' or es.salary between 55000 and 65000
+	
+-- 4. Display the names and ages of employees who were born in the 1980s and do not work in the Parks and Recreation department.
+select distinct ed.first_name ,ed.last_name ,ed.age ,ed.birth_date , es.occupation, pd.department_name 
+	from employee_demographics ed
+		inner join employee_salary es 
+		on ed.employee_id = ed.employee_id 
+			inner join parks_departments pd 
+			on es.dept_id  = pd.department_id 
+				where year(ed.birth_date) = 1980 and 1989 and pd.department_name != 'Parks and Recreation'
+				
+-- 5. List all employees with their department names, including those who don't have a department assigned.
+select distinct 
+	es.first_name ,es.last_name, es.occupation, pd.department_name 
+	from employee_salary es
+	left join parks_departments pd 
+	on es.dept_id = pd.department_id
+	
+-- 6. Find employees who have the same last name as  occupation (%Ci%).
+	select es.last_name, es.occupation from employee_salary es 
+	where es.occupation like('%Ci%')
+	
+-- 7. Show the names and salaries of employees who work in either the Parks and Recreation department or the Healthcare department.
+select ed.first_name ,ed.last_name ,pd.department_name 
+	from employee_demographics ed 
+		inner join employee_salary es 
+		on ed.employee_id = es.employee_id 
+		inner  join parks_departments pd 
+		on es.dept_id = pd.department_id 
+			where pd.department_name = 'Parks and Recreation' or pd.department_name = 'Healthcare'
+			order by 3 asc 
+			
+-- 8. List employees who are either over 40 years old or earn less than $30,000, along with their department names.
+select distinct ed.first_name ,ed.last_name ,ed.age ,es.salary, pd.department_name 
+	from employee_demographics ed 
+		inner join employee_salary es 
+		on ed.employee_id = ed.employee_id 
+		left join parks_departments pd 
+		on es.dept_id = pd.department_id 
+WHERE ed.age >= 40 OR es.salary < 30000;
+
+-- 9. Display the names and birth dates of employees who were born in either March or September and have 
+-- "Shoe Shiner and Musician" or "City Planner" in their job title.
+select ed.first_name ,ed.last_name , date_format(ed.birth_date, '%M') as Birth_Month, es.occupation 
+from employee_demographics ed 
+	inner join employee_salary es 
+	on ed.employee_id = es.employee_id 
+	where (monthname(ed.birth_date) = 'September' or  monthname(ed.birth_date) = 'March')
+	and 
+	(es.occupation = 'Shoe Shiner and Musician' or es.occupation = 'City Planner')
+	
+-- 10. Find all employees whose first name starts with 'A' or last name ends with 'S', along with their department names if available.
+select ed.first_name ,ed.last_name ,pd.department_name 
+from employee_demographics ed 
+	inner join employee_salary es 
+	on ed.employee_id = es.employee_id 
+	left join parks_departments pd 
+	on pd.department_id = es.dept_id 
+	where ed.first_name like 'A%' or ed.last_name like '%S'
